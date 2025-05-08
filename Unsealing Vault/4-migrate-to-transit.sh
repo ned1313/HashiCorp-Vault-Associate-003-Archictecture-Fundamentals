@@ -5,7 +5,7 @@ docker container stop vault-basic
 docker network connect vault-network vault-basic
 
 # Add a config file for the basic server to use the Transit server as the unseal key provider
-@"
+cat > "../Vault Data Encryption/config/seal-config.hcl" << EOF
 seal "transit" {
   address = "http://vault-transit:8200"
   disable_renewal = "false"
@@ -13,13 +13,13 @@ seal "transit" {
   mount_path = "transit/"
   token = "$UNSEAL_TOKEN"
 }
-"@ | Out-File -FilePath "../Vault Data Encryption/config/seal-config.hcl" -Encoding ASCII
+EOF
 
 # Start the basic server with the added config file
 docker container start vault-basic
 
 # Update VAULT_ADDR to point to the basic server
-$env:VAULT_ADDR = "http://localhost:8200"
+export VAULT_ADDR="http://localhost:8200"
 
 # Check the status of the basic server
 vault status
@@ -38,7 +38,5 @@ docker container rm -f vault-basic vault-transit
 docker network rm vault-network
 
 # Delete the data directory and seal-config file
-Remove-Item -Path "..\Vault Data Encryption\config\seal-config.hcl" -Force
-Remove-Item -Path "$(Get-Location)\data" -Force
-
-
+rm -f "../Vault Data Encryption/config/seal-config.hcl"
+rm -rf "$(pwd)/data"

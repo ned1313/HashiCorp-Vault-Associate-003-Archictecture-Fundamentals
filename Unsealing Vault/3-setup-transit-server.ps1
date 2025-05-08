@@ -15,6 +15,10 @@ docker run -d `
 
 $env:VAULT_ADDR = "http://127.0.0.1:8210"
 
+# Wait for the Vault Transit server to start
+Write-Host "Waiting for Vault Transit server to start..."
+Start-Sleep -Seconds 5
+
 # Initialize Vault Transit server
 Write-Host "Initializing Vault Transit server..."
 docker exec -it vault-transit vault operator init -key-shares=1 -key-threshold=1 `
@@ -52,4 +56,7 @@ path "transit/decrypt/autounseal" {
 vault policy write transit-policy transit-policy.hcl
 Remove-Item transit-policy.hcl -Force
 $UNSEAL_TOKEN = $(vault token create -orphan -policy="transit-policy" -period=24h -field=token)
+
+# Show the unseal token
+Write-Host "Unseal token for primary server: $UNSEAL_TOKEN"
 
