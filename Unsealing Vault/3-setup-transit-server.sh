@@ -9,7 +9,6 @@ docker network create vault-network
 
 # Run transit server
 docker run -d \
-  --user $(id -u):$(id -g) \
   --name vault-transit \
   --cap-add=IPC_LOCK \
   -p 8210:8200 \
