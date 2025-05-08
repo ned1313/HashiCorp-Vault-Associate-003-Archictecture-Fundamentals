@@ -1,11 +1,15 @@
 #!/bin/bash
 # filepath: c:\gh\HashiCorp-Vault-Associate-003-Archictecture-Fundamentals\Unsealing Vault\3-setup-transit-server.sh
 
+mkdir -p data
+chmod 777 data
+
 # Create a vault-network in Docker
 docker network create vault-network
 
 # Run transit server
 docker run -d \
+  --user $(id -u):$(id -g) \
   --name vault-transit \
   --cap-add=IPC_LOCK \
   -p 8210:8200 \

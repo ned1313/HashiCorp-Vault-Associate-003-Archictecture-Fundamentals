@@ -4,6 +4,7 @@ chmod 777 data
 
 # Run basic server
 docker run -d \
+  --user $(id -u):$(id -g) \
   --name vault-basic \
   --cap-add=IPC_LOCK \
   -p 8200:8200 \
